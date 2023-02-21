@@ -7,7 +7,7 @@ import open from "../../../assets/icons/open.svg";
 
 const variants = {
   open: {},
-  closed: { width: "100px" },
+  closed: { width: "80px" },
 };
 
 const Sidepanel: React.FC = () => {

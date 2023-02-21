@@ -8,7 +8,7 @@ import HomePage from "./pages/HomePage";
 const Router: React.FC = () => {
   return (
     <BrowserRouter>
-      <Sidepanel />
+      {/*  <Sidepanel /> */}
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/dashboard" element={<Dashboard />} />
