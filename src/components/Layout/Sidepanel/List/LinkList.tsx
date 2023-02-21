@@ -17,19 +17,19 @@ const LinkList: React.FC<LinkListInterface> = ({ isOpen }) => {
   return (
     <ul className="mt-10">
       <NavLink to="/invoice/create" style={({ isActive }) => (isActive ? activeStyle : undefined)}>
-        <li className={`flex mb-4 w-full ${!isOpen && "justify-center"}`}>
+        <li className={`flex items-center mb-4 w-full ${!isOpen && "justify-center"}`}>
           <img src={invoice} alt="" className="h-7" />
           {isOpen && "New Bill"}
         </li>
       </NavLink>
       <NavLink to="/all-invoices" style={({ isActive }) => (isActive ? activeStyle : undefined)}>
-        <li className={`flex mb-4 w-full ${!isOpen && "justify-center"}`}>
+        <li className={`flex items-center mb-4 w-full ${!isOpen && "justify-center"}`}>
           <img src={historic} alt="" className="h-7" />
           {isOpen && "All invoices"}
         </li>
       </NavLink>
       <NavLink to="/profile/id" style={({ isActive }) => (isActive ? activeStyle : undefined)}>
-        <li className={`flex mb-4 w-full ${!isOpen && "justify-center"}`}>
+        <li className={`flex items-center mb-4 w-full ${!isOpen && "justify-center"}`}>
           <img src={profile} alt="" className="h-7" />
           {isOpen && "Profile"}
         </li>
