@@ -2,17 +2,19 @@ import axios from "axios";
 import React, { useRef, useState } from "react";
 import FormContainer from "../../UI/FormContainer/FormContainer";
 import Input from "../../UI/Input/Input";
+import { validationEmail } from "../../../utils/formValidation/EmailValidation";
 
 const LoginForm: React.FC = () => {
-  const [isLoading, setIsLoading] = useState<Boolean>(false);
-  const [isSuccess, setIsSuccess] = useState<Boolean | null>(null);
-  const [isEmail, setIsEmail] = useState<Boolean | null>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isSuccess, setIsSuccess] = useState<boolean | null>(null);
+  const [emailHasError, setEmailHasError] = useState<boolean>(true);
+  const [emailErrorMessage, setEmailErrorMessage] = useState("");
 
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = (event: React.FormEvent) => {
-    setIsLoading(true);
+  const handleSubmit = async (event: React.FormEvent) => {
+    setIsSuccess(null);
     event.preventDefault();
 
     const user = {
@@ -20,17 +22,24 @@ const LoginForm: React.FC = () => {
       password: passwordInputRef.current!.value,
     };
 
+    const validated = await validationEmail(user.email, setEmailHasError, setEmailErrorMessage);
+
+    if (!validated) return;
+    setIsLoading(true);
+
     axios
       .post("http://localhost:8000/user/login", user)
       .then((res) => {
-        console.log(res.data);
         localStorage.setItem("token", res.data.token);
-        setIsLoading(false);
+
         setIsSuccess(true);
       })
       .catch((err) => {
-        setIsEmail(false);
+        setEmailHasError(false);
+        setIsSuccess(false);
       });
+
+    setIsLoading(false);
   };
   return (
     <FormContainer>
@@ -39,7 +48,7 @@ const LoginForm: React.FC = () => {
         <div className="flex flex-col">
           <label htmlFor="email-login"></label>
           <Input id="email-login" label="Email input login" placeholder="Email" type="email" ref={emailInputRef} />
-          {!isEmail && <p className="text-red text-sm">Wrong email format</p>}
+          {emailHasError && <p className="flex justify-end text-red text-sm font-semibold">{emailErrorMessage}</p>}
         </div>
         <div className="flex flex-col my-4">
           <label htmlFor="password-login"></label>
@@ -56,7 +65,14 @@ const LoginForm: React.FC = () => {
             {isLoading ? "Loading" : "Submit"}
           </button>
           {isSuccess && (
-            <span className="flex justify-center items-center rounded-lg h-10 px-2 bg-green-300">Redirection</span>
+            <span className="mt-2 flex justify-center items-center rounded-lg h-10 px-2 bg-green-300">
+              Login Successful
+            </span>
+          )}
+          {isSuccess === false && (
+            <span className="mt-2 flex justify-center items-center rounded-lg h-10 text-sm font-semibold text-white px-2 bg-red">
+              Wrong email or password
+            </span>
           )}
         </div>
       </form>
