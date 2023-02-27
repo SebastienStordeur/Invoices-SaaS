@@ -1,9 +1,13 @@
 import React from "react";
+import PDF from "../../assets/icons/pdf.svg";
 
-const InvoiceTable: React.FC = () => {
-  const array = [200, 150, 277, 500, 800];
+interface InvoiceTableInterface {
+  invoices: any[];
+}
+
+const InvoiceTable: React.FC<InvoiceTableInterface> = ({ invoices }) => {
   return (
-    <table className="border border-gray mt-10">
+    <table className="border border-gray mt-10 w-full">
       <thead>
         <tr className="grid grid-cols-5 [&>*]:px-4">
           <th>From</th>
@@ -14,17 +18,19 @@ const InvoiceTable: React.FC = () => {
         </tr>
       </thead>
       <tbody>
-        {array.map((value, index) => {
+        {invoices.map((invoice) => {
           return (
             <tr
-              key={index}
-              className="grid grid-cols-5 [&>*]:flex [&>*]:justify-center [&>*]:items-center h-10 odd:bg-gray even:bg-light"
+              key={invoice._id}
+              className="grid grid-cols-5 [&>*]:flex [&>*]:justify-center [&>*]:items-center h-10 odd:bg-gray even:bg-light text-sm"
             >
-              <td>ABC</td>
-              <td>POI</td>
+              <td>{invoice.company}</td>
+              <td>{invoice.toName}</td>
               <td>Paid</td>
-              <td>450</td>
-              <td>files</td>
+              <td>{invoice.totalAmount}</td>
+              <td>
+                <img className="h-8 w-8 cursor pointer" src={PDF} alt="pdf" />
+              </td>
             </tr>
           );
         })}
