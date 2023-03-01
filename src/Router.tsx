@@ -4,6 +4,7 @@ import Sidepanel from "./components/Layout/Sidepanel/Sidepanel";
 import AllInvoices from "./pages/AllInvoices";
 import Dashboard from "./pages/Dashboard";
 import HomePage from "./pages/HomePage";
+import UpdateProfile from "./pages/UpdateProfile";
 
 const Router: React.FC = () => {
   return (
@@ -13,6 +14,7 @@ const Router: React.FC = () => {
         <Route path="/" element={<HomePage />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/all-invoices" element={<AllInvoices />} />
+        <Route path="/update-profile" element={<UpdateProfile />} />
       </Routes>
     </BrowserRouter>
   );

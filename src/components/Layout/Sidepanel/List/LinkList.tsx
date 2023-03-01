@@ -28,7 +28,7 @@ const LinkList: React.FC<LinkListInterface> = ({ isOpen }) => {
           {isOpen && "All invoices"}
         </li>
       </NavLink>
-      <NavLink to="/profile/id" style={({ isActive }) => (isActive ? activeStyle : undefined)}>
+      <NavLink to="/update-profile" style={({ isActive }) => (isActive ? activeStyle : undefined)}>
         <li className={`flex items-center mb-4 w-full ${!isOpen && "justify-center"}`}>
           <img src={profile} alt="" className="h-7" />
           {isOpen && "Profile"}
