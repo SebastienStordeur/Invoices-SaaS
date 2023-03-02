@@ -59,7 +59,6 @@ const SignupForm: React.FC = () => {
     axios
       .post("http://localhost:8000/user/signup", user)
       .then((res) => {
-        console.log(res.data);
         setIsSuccess(true);
       })
       .catch((err) => {
