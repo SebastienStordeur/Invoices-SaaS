@@ -1,7 +1,9 @@
 import axios from "axios";
 import React, { useRef, useState } from "react";
+import { validationEmail } from "../../../utils/formValidation/EmailValidation";
 import FormContainer from "../../UI/FormContainer/FormContainer";
 import Input from "../../UI/Input/Input";
+import { validateName } from "../../../utils/formValidation/NamesValidation";
 
 const SignupForm: React.FC = () => {
   const lastnameInputRef = useRef<HTMLInputElement>(null);
@@ -12,18 +14,40 @@ const SignupForm: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSuccess, setIsSuccess] = useState<boolean | null>(null);
+  const [isCompany, setIsCompany] = useState<boolean>(false);
+
+  const [emailHasError, setEmailHasError] = useState<boolean>(true);
+  const [emailErrorMessage, setEmailErrorMessage] = useState("");
+
+  const [lastnameHasError, setLastnameHasError] = useState<boolean>(true);
+  const [lastnameErrorMessage, setLastnameErrorMessage] = useState("");
+  const [firstnameHasError, setFirstnameHasError] = useState<boolean>(true);
+  const [firstnameErrorMessage, setFirstnameErrorMessage] = useState("");
+  const [passwordHasError, setPasswordHasError] = useState<boolean>(false);
 
   const handleSubmit = async (event: React.FormEvent) => {
     setIsSuccess(null);
     event.preventDefault();
 
     const user = {
-      lastName: lastnameInputRef.current?.value,
-      firstName: firstnameInputRef.current?.value,
-      companyName: companyNameInputRef.current?.value,
+      lastName: !isCompany ? lastnameInputRef.current!.value : "",
+      firstName: !isCompany ? firstnameInputRef.current!.value : "",
+      companyName: isCompany ? companyNameInputRef.current!.value : companyNameInputRef.current?.value,
       email: emailInputRef.current!.value,
       password: passwordInputRef.current!.value,
     };
+
+    const lastnameValidated = await validateName(user.lastName, setLastnameHasError, setLastnameErrorMessage);
+    const firstnameValidated = await validateName(user.firstName, setFirstnameHasError, setFirstnameErrorMessage);
+    const companyValidated = "";
+    const emailValidated = await validationEmail(user.email, setEmailHasError, setEmailErrorMessage);
+    const passwordValidated = user.password.length >= 8 ? true : false;
+
+    passwordValidated ? setPasswordHasError(false) : setPasswordHasError(true);
+
+    if (!isCompany && (!lastnameValidated || !firstnameValidated || !emailValidated || !passwordValidated)) {
+      return;
+    }
 
     setIsLoading(true);
     axios
@@ -42,38 +66,51 @@ const SignupForm: React.FC = () => {
     <FormContainer>
       <form onSubmit={handleSubmit}>
         <h2 className="mb-10">Sign Up</h2>
-        <div className="">
-          <Input
-            id="lastname-signup"
-            label="Lastname input signup"
-            placeholder="Lastname"
-            type="text"
-            ref={lastnameInputRef}
-          />
+        <div className="flex justify-between">
+          <h3>Are you a company?</h3>
+          <input type="checkbox" id="company-trigger" onClick={() => setIsCompany((prev) => !prev)} />
         </div>
-        <div className="flex flex-col my-4">
-          <label htmlFor="firstname-signup"></label>
-          <Input
-            id="firstname-signup"
-            label="Firstname input login"
-            placeholder="Firstname"
-            type="text"
-            ref={firstnameInputRef}
-          />
-        </div>
-        <div className="flex flex-col my-4">
-          <label htmlFor="company-signup"></label>
-          <Input
-            id="company-signup"
-            label="Company input signup"
-            placeholder="Company name"
-            type="text"
-            ref={companyNameInputRef}
-          />
-        </div>
+        {!isCompany && (
+          <React.Fragment>
+            <div className="">
+              <Input
+                id="lastname-signup"
+                label="Lastname input signup"
+                placeholder="Lastname"
+                type="text"
+                ref={lastnameInputRef}
+              />
+              {lastnameHasError && <p>{lastnameErrorMessage}</p>}
+            </div>
+            <div className="flex flex-col my-4">
+              <label htmlFor="firstname-signup"></label>
+              <Input
+                id="firstname-signup"
+                label="Firstname input login"
+                placeholder="Firstname"
+                type="text"
+                ref={firstnameInputRef}
+              />
+              {firstnameHasError && <p>{firstnameErrorMessage}</p>}
+            </div>
+          </React.Fragment>
+        )}
+        {isCompany && (
+          <div className="flex flex-col my-4">
+            <label htmlFor="company-signup"></label>
+            <Input
+              id="company-signup"
+              label="Company input signup"
+              placeholder="Company name"
+              type="text"
+              ref={companyNameInputRef}
+            />
+          </div>
+        )}
         <div className="flex flex-col my-4">
           <label htmlFor="email-signup"></label>
           <Input id="email-signup" label="Email input signup" placeholder="Email" type="email" ref={emailInputRef} />
+          {emailHasError && <p>{emailErrorMessage}</p>}
         </div>
         <div className="flex flex-col my-4">
           <label htmlFor="password-signup"></label>
@@ -84,6 +121,7 @@ const SignupForm: React.FC = () => {
             type="password"
             ref={passwordInputRef}
           />
+          {passwordHasError && <p>Password is too short</p>}
         </div>
         <button type="submit">Submit</button>
         {isSuccess && (
