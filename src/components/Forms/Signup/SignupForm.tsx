@@ -3,7 +3,7 @@ import React, { useRef, useState } from "react";
 import { validationEmail } from "../../../utils/formValidation/EmailValidation";
 import FormContainer from "../../UI/FormContainer/FormContainer";
 import Input from "../../UI/Input/Input";
-import { validateName } from "../../../utils/formValidation/NamesValidation";
+import { validateName, validateText } from "../../../utils/formValidation/NamesValidation";
 
 const SignupForm: React.FC = () => {
   const lastnameInputRef = useRef<HTMLInputElement>(null);
@@ -20,9 +20,11 @@ const SignupForm: React.FC = () => {
   const [emailErrorMessage, setEmailErrorMessage] = useState("");
 
   const [lastnameHasError, setLastnameHasError] = useState<boolean>(true);
-  const [lastnameErrorMessage, setLastnameErrorMessage] = useState("");
+  const [lastnameErrorMessage, setLastnameErrorMessage] = useState<string>("");
   const [firstnameHasError, setFirstnameHasError] = useState<boolean>(true);
-  const [firstnameErrorMessage, setFirstnameErrorMessage] = useState("");
+  const [firstnameErrorMessage, setFirstnameErrorMessage] = useState<string>("");
+  const [companyHasError, setCompanyHasError] = useState<boolean>(false);
+  const [companyErrorMessage, setCompanyErrorMessage] = useState<string>("");
   const [passwordHasError, setPasswordHasError] = useState<boolean>(false);
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -30,8 +32,8 @@ const SignupForm: React.FC = () => {
     event.preventDefault();
 
     const user = {
-      lastName: !isCompany ? lastnameInputRef.current!.value : "",
-      firstName: !isCompany ? firstnameInputRef.current!.value : "",
+      lastName: !isCompany ? lastnameInputRef.current!.value : lastnameInputRef.current?.value,
+      firstName: !isCompany ? firstnameInputRef.current!.value : firstnameInputRef.current?.value,
       companyName: isCompany ? companyNameInputRef.current!.value : companyNameInputRef.current?.value,
       email: emailInputRef.current!.value,
       password: passwordInputRef.current!.value,
@@ -39,13 +41,17 @@ const SignupForm: React.FC = () => {
 
     const lastnameValidated = await validateName(user.lastName, setLastnameHasError, setLastnameErrorMessage);
     const firstnameValidated = await validateName(user.firstName, setFirstnameHasError, setFirstnameErrorMessage);
-    const companyValidated = "";
+    const companyValidated = await validateText(user.companyName, setCompanyHasError, setCompanyErrorMessage);
     const emailValidated = await validationEmail(user.email, setEmailHasError, setEmailErrorMessage);
     const passwordValidated = user.password.length >= 8 ? true : false;
 
     passwordValidated ? setPasswordHasError(false) : setPasswordHasError(true);
 
     if (!isCompany && (!lastnameValidated || !firstnameValidated || !emailValidated || !passwordValidated)) {
+      return;
+    }
+
+    if (isCompany && (!companyValidated || !emailValidated || !passwordValidated)) {
       return;
     }
 
@@ -105,6 +111,7 @@ const SignupForm: React.FC = () => {
               type="text"
               ref={companyNameInputRef}
             />
+            {companyHasError && <p>{companyErrorMessage}</p>}
           </div>
         )}
         <div className="flex flex-col my-4">
