@@ -3,12 +3,14 @@ import React, { useRef, useState } from "react";
 import FormContainer from "../../UI/FormContainer/FormContainer";
 import Input from "../../UI/Input/Input";
 import { validationEmail } from "../../../utils/formValidation/EmailValidation";
+import { useNavigate } from "react-router-dom";
 
 const LoginForm: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSuccess, setIsSuccess] = useState<boolean | null>(null);
   const [emailHasError, setEmailHasError] = useState<boolean>(true);
   const [emailErrorMessage, setEmailErrorMessage] = useState("");
+  const navigate = useNavigate();
 
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
@@ -33,6 +35,7 @@ const LoginForm: React.FC = () => {
         localStorage.setItem("token", res.data.token);
 
         setIsSuccess(true);
+        navigate("/dashboard");
       })
       .catch((err) => {
         setEmailHasError(false);

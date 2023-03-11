@@ -7,9 +7,10 @@ interface InputInterface {
   className?: string;
   type?: string;
   ref: React.ForwardedRef<HTMLInputElement>;
+  defaultValue?: string;
 }
 
-const Input: React.FC<InputInterface> = forwardRef(({ id, label, placeholder, className, type }, ref) => {
+const Input: React.FC<InputInterface> = forwardRef(({ id, label, placeholder, className, type, defaultValue }, ref) => {
   return (
     <input
       id={id}
@@ -18,6 +19,7 @@ const Input: React.FC<InputInterface> = forwardRef(({ id, label, placeholder, cl
       className={`h-10 w-full rounded-lg shadow-md px-2 text-lg placeholder:text-lg ${className}`}
       type={type || "text"}
       ref={ref}
+      defaultValue={defaultValue}
     />
   );
 });

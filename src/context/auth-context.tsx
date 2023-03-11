@@ -25,23 +25,23 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
 
   const login = (token: string) => {
     localStorage.setItem("token", token);
+    getAuth();
     setIsAuthenticated(true);
   };
 
   const getAuth = () => {
     const token = localStorage.getItem("token");
-    const id = localStorage.getItem("id");
-    console.log(id);
     axios
-      .get("http://localhost:8000/user/getAuth", { params: { id }, headers: { Authorization: `Bearer ${token}` } })
+      .get("http://localhost:8000/user/getUser", { headers: { Authorization: `Bearer ${token}` } })
       .then((res) => {
         const user = res.data.user;
         setCurrentUser({
-          id: user.id,
+          id: user._id,
           firstName: user.firstName,
           lastName: user.lastName,
-          fullName: user.fullName,
-          userName: user.userName,
+          email: user.email,
+          companyName: user.companyName,
+          company: user.company,
         });
         setIsAuthenticated(true);
         return { setIsAuthenticated, currentUser };
